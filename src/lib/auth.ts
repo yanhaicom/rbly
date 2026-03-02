@@ -18,16 +18,16 @@ export async function login(email: string, password: string) {
     .setExpirationTime('7d')
     .sign(secret);
 
-  cookies().set(COOKIE_NAME, token, { httpOnly: true, sameSite: 'lax', path: '/' });
+  (await cookies()).set(COOKIE_NAME, token, { httpOnly: true, sameSite: 'lax', path: '/' });
   return { id: user.id, email: user.email, role: user.role, name: user.name };
 }
 
 export async function logout() {
-  cookies().delete(COOKIE_NAME);
+  (await cookies()).delete(COOKIE_NAME);
 }
 
 export async function getSession() {
-  const token = cookies().get(COOKIE_NAME)?.value;
+  const token = (await cookies()).get(COOKIE_NAME)?.value;
   if (!token) return null;
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
