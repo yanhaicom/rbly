@@ -21,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/routes">线路</a>
               <a href="/articles">攻略</a>
               <a href="/services">服务</a>
+              <a href="/guides">导游</a>
               <a href="/about">关于</a>
               <a href="/contact">联系</a>
             </nav>

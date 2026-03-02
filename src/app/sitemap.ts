@@ -12,6 +12,7 @@ export default async function sitemap() {
 
   return [
     { url: `${base}/`, lastModified: new Date() },
+    { url: `${base}/guides`, lastModified: new Date() },
     ...cities.map((c) => ({ url: `${base}/cities/${c.slug}`, lastModified: c.updatedAt })),
     ...spots.map((s) => ({ url: `${base}/spots/${s.slug}`, lastModified: s.updatedAt })),
     ...routes.map((r) => ({ url: `${base}/routes/${r.slug}`, lastModified: r.updatedAt })),
