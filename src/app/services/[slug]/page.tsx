@@ -2,10 +2,11 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const service = await prisma.service.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  const service = await prisma.service.findUnique({ where: { slug } });
   if (!service) return {};
   return {
     title: service.seoTitleZh ?? `${service.nameZh} | rbly`,
@@ -14,7 +15,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ServiceDetail({ params }: Props) {
-  const service = await prisma.service.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  const service = await prisma.service.findUnique({ where: { slug } });
   if (!service) notFound();
   return (
     <div className="space-y-4">

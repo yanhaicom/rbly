@@ -2,10 +2,11 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const city = await prisma.city.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  const city = await prisma.city.findUnique({ where: { slug } });
   if (!city) return {};
   return {
     title: city.seoTitleZh ?? `${city.nameZh} | rbly`,
@@ -14,8 +15,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CityDetail({ params }: Props) {
+  const { slug } = await params;
   const city = await prisma.city.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: {
       spots: { where: { isPublished: true, isRecommended: true }, take: 6 },
     },

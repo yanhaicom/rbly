@@ -2,10 +2,11 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const spot = await prisma.spot.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  const spot = await prisma.spot.findUnique({ where: { slug } });
   if (!spot) return {};
   return {
     title: spot.seoTitleZh ?? `${spot.nameZh} | rbly`,
@@ -14,8 +15,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SpotDetail({ params }: Props) {
+  const { slug } = await params;
   const spot = await prisma.spot.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: { images: true, city: true },
   });
   if (!spot) notFound();
