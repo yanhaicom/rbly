@@ -1,0 +1,154 @@
+// Prisma 数据模型定义，PostgreSQL
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum AdminRole {
+  admin
+  editor
+}
+
+model City {
+  id                Int       @id @default(autoincrement())
+  slug              String    @unique
+  nameZh            String
+  nameJa            String
+  summaryZh         String?
+  summaryJa         String?
+  descriptionZh     String?
+  descriptionJa     String?
+  region            String?
+  seoTitleZh        String?
+  seoTitleJa        String?
+  seoDescriptionZh  String?
+  seoDescriptionJa  String?
+  isPublished       Boolean   @default(false)
+  spots             Spot[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Spot {
+  id                Int        @id @default(autoincrement())
+  cityId            Int
+  city              City       @relation(fields: [cityId], references: [id])
+  slug              String     @unique
+  nameZh            String
+  nameJa            String
+  summaryZh         String?
+  summaryJa         String?
+  descriptionZh     String?
+  descriptionJa     String?
+  addressZh         String?
+  addressJa         String?
+  latitude          Float?
+  longitude         Float?
+  openTime          String?
+  ticketInfo        String?
+  isRecommended     Boolean    @default(false)
+  isPublished       Boolean    @default(false)
+  images            SpotImage[]
+  routeSpots        RouteSpot[]
+  seoTitleZh        String?
+  seoTitleJa        String?
+  seoDescriptionZh  String?
+  seoDescriptionJa  String?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model SpotImage {
+  id        Int    @id @default(autoincrement())
+  spotId    Int
+  spot      Spot   @relation(fields: [spotId], references: [id])
+  imageUrl  String
+  altTextZh String?
+  altTextJa String?
+  sortOrder Int    @default(0)
+}
+
+model Route {
+  id               Int         @id @default(autoincrement())
+  slug             String      @unique
+  titleZh          String
+  titleJa          String
+  summaryZh        String?
+  summaryJa        String?
+  descriptionZh    String?
+  descriptionJa    String?
+  days             Int
+  priceFrom        Int?
+  priceTo          Int?
+  isPublished      Boolean     @default(false)
+  isRecommended    Boolean     @default(false)
+  seoTitleZh       String?
+  seoTitleJa       String?
+  seoDescriptionZh String?
+  seoDescriptionJa String?
+  routeSpots       RouteSpot[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model RouteSpot {
+  id         Int   @id @default(autoincrement())
+  routeId    Int
+  route      Route @relation(fields: [routeId], references: [id])
+  spotId     Int
+  spot       Spot  @relation(fields: [spotId], references: [id])
+  dayIndex   Int
+  orderIndex Int
+}
+
+model Article {
+  id               Int       @id @default(autoincrement())
+  slug             String    @unique
+  titleZh          String
+  titleJa          String
+  summaryZh        String?
+  summaryJa        String?
+  contentZh        String?
+  contentJa        String?
+  category         String?
+  isPublished      Boolean   @default(false)
+  publishedAt      DateTime?
+  seoTitleZh       String?
+  seoTitleJa       String?
+  seoDescriptionZh String?
+  seoDescriptionJa String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Service {
+  id               Int       @id @default(autoincrement())
+  slug             String    @unique
+  nameZh           String
+  nameJa           String
+  descriptionZh    String?
+  descriptionJa    String?
+  serviceType      String?
+  basePrice        Int?
+  isPublished      Boolean   @default(false)
+  seoTitleZh       String?
+  seoTitleJa       String?
+  seoDescriptionZh String?
+  seoDescriptionJa String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model AdminUser {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         AdminRole @default(editor)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
